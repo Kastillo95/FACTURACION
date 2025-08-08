@@ -82,7 +82,8 @@ export class MemStorage implements IStorage {
       const serviceWithId: Service = {
         ...service,
         id,
-        createdAt: new Date()
+        createdAt: new Date(),
+        stock: service.stock ?? -1
       };
       this.services.set(id, serviceWithId);
     });
@@ -128,7 +129,8 @@ export class MemStorage implements IStorage {
     const service: Service = { 
       ...insertService, 
       id,
-      createdAt: new Date()
+      createdAt: new Date(),
+      stock: insertService.stock ?? -1
     };
     this.services.set(id, service);
     return service;
@@ -152,17 +154,27 @@ export class MemStorage implements IStorage {
     const invoiceNumber = await this.getNextInvoiceNumber();
     
     const invoice: Invoice = {
-      ...insertInvoice,
       id: invoiceId,
       invoiceNumber,
       clientId: randomUUID(), // In real implementation, this would be properly linked
+      clientRtn: insertInvoice.clientRtn,
+      clientName: insertInvoice.clientName,
+      subtotalExempt: insertInvoice.subtotalExempt ?? "0.00",
+      subtotalTaxable: insertInvoice.subtotalTaxable ?? "0.00",
+      isv: insertInvoice.isv ?? "0.00",
+      total: insertInvoice.total,
       createdAt: new Date()
     };
 
     const invoiceItems: InvoiceItem[] = items.map(item => ({
-      ...item,
       id: randomUUID(),
-      invoiceId
+      invoiceId,
+      serviceId: item.serviceId,
+      description: item.description,
+      price: item.price,
+      quantity: item.quantity ?? 1,
+      subtotal: item.subtotal,
+      taxable: item.taxable ?? true
     }));
 
     this.invoices.set(invoiceId, invoice);

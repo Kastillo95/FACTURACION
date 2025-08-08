@@ -18,6 +18,7 @@ export const services = pgTable("services", {
   category: text("category").notNull(),
   taxable: boolean("taxable").notNull().default(true),
   stock: integer("stock").default(-1), // -1 for unlimited (services)
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const invoices = pgTable("invoices", {

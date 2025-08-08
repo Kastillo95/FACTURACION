@@ -159,7 +159,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return res.status(400).json({ message: `Service with ID ${item.serviceId} not found` });
         }
         
-        const subtotal = parseFloat(service.price) * item.quantity;
+        const subtotal = parseFloat(service.price) * (item.quantity ?? 1);
         
         if (service.taxable) {
           // El precio ya incluye ISV, calculamos el precio sin ISV
