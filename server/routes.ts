@@ -6,8 +6,13 @@ import { z } from "zod";
 
 const createInvoiceSchema = z.object({
   client: insertClientSchema,
-  items: z.array(insertInvoiceItemSchema.extend({
-    serviceId: z.string()
+  items: z.array(z.object({
+    serviceId: z.string(),
+    description: z.string(),
+    price: z.union([z.string(), z.number()]),
+    quantity: z.number().default(1),
+    subtotal: z.union([z.string(), z.number()]),
+    taxable: z.boolean().default(true)
   }))
 });
 

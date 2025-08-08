@@ -1,22 +1,18 @@
-import { Car, FileText, Package, Users, BarChart3, Settings } from "lucide-react";
+import { FileText, BarChart3, Settings, Home } from "lucide-react";
+import { Link, useLocation } from "wouter";
 import logoImage from "@assets/IMG-20250624-WA0043_1754679298693.jpg";
 
-interface SidebarProps {
-  currentSection: string;
-  onSectionChange: (section: string) => void;
-}
+export default function Sidebar() {
+  const [location] = useLocation();
 
-export default function Sidebar({ currentSection, onSectionChange }: SidebarProps) {
   const menuItems = [
-    { id: "invoicing", label: "Nueva Factura", icon: FileText, active: true },
-    { id: "inventory", label: "Inventario", icon: Package },
-    { id: "clients", label: "Clientes", icon: Users },
-    { id: "reports", label: "Reportes", icon: BarChart3 },
-    { id: "settings", label: "Configuración", icon: Settings }
+    { path: "/", label: "Nueva Factura", icon: Home },
+    { path: "/reports", label: "Reportes", icon: BarChart3 },
+    { path: "/settings", label: "Configuración", icon: Settings }
   ];
 
   return (
-    <div className="w-64 bg-primary text-white flex-shrink-0 relative">
+    <div className="w-64 bg-primary text-white flex-shrink-0 relative fixed h-full">
       <div className="p-6">
         {/* Logo and Business Info */}
         <div className="text-center mb-8">
@@ -39,22 +35,22 @@ export default function Sidebar({ currentSection, onSectionChange }: SidebarProp
         <nav className="space-y-2">
           {menuItems.map((item) => {
             const Icon = item.icon;
-            const isActive = currentSection === item.id;
+            const isActive = location === item.path;
             
             return (
-              <button
-                key={item.id}
-                onClick={() => onSectionChange(item.id)}
-                data-testid={`nav-${item.id}`}
-                className={`flex items-center w-full px-4 py-3 text-sm rounded-lg transition-colors ${
-                  isActive
-                    ? "bg-blue-800 text-white"
-                    : "text-blue-200 hover:text-white hover:bg-blue-800"
-                }`}
-              >
-                <Icon className="w-5 h-5 mr-3" />
-                {item.label}
-              </button>
+              <Link key={item.path} href={item.path}>
+                <div
+                  data-testid={`nav-${item.path.replace('/', '') || 'home'}`}
+                  className={`flex items-center w-full px-4 py-3 text-sm rounded-lg transition-colors cursor-pointer ${
+                    isActive
+                      ? "bg-blue-800 text-white"
+                      : "text-blue-200 hover:text-white hover:bg-blue-800"
+                  }`}
+                >
+                  <Icon className="w-5 h-5 mr-3" />
+                  {item.label}
+                </div>
+              </Link>
             );
           })}
         </nav>
@@ -69,6 +65,9 @@ export default function Sidebar({ currentSection, onSectionChange }: SidebarProp
         <p data-testid="business-phone">
           📞 9464-8987
         </p>
+        <div className="text-xs mt-2 font-bold">HORARIOS:</div>
+        <div className="text-xs">Lun-Sáb: 8AM-5PM</div>
+        <div className="text-xs">Dom: 8AM-3PM</div>
       </div>
     </div>
   );
