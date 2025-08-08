@@ -87,8 +87,8 @@ export default function InvoiceForm({ onInvoiceChange }: InvoiceFormProps) {
   });
 
   useEffect(() => {
-    if (nextNumberData && 'invoiceNumber' in nextNumberData) {
-      setInvoiceNumber(nextNumberData.invoiceNumber);
+    if (nextNumberData && typeof nextNumberData === 'object' && nextNumberData !== null && 'invoiceNumber' in nextNumberData) {
+      setInvoiceNumber((nextNumberData as any).invoiceNumber);
     }
   }, [nextNumberData]);
 
@@ -153,6 +153,10 @@ export default function InvoiceForm({ onInvoiceChange }: InvoiceFormProps) {
     }
   };
 
+  const getServicesByCategory = (category: string) => {
+    return services.filter(service => service.category === category);
+  };
+
   const updateItem = (index: number, field: keyof InvoiceItem, value: any) => {
     const updatedItems = [...invoiceItems];
     updatedItems[index] = { ...updatedItems[index], [field]: value };
@@ -188,7 +192,7 @@ export default function InvoiceForm({ onInvoiceChange }: InvoiceFormProps) {
     if (invoiceItems.length === 0) {
       toast({
         title: "Error",
-        description: "Debe agregar al menos un servicio.",
+        description: "Debe agregar al menos un artículo.",
         variant: "destructive",
       });
       return;
@@ -266,22 +270,30 @@ export default function InvoiceForm({ onInvoiceChange }: InvoiceFormProps) {
             </div>
           </div>
 
-          {/* Services Section */}
+          {/* Services and Products Section */}
           <div className="border-t pt-6">
             <div className="flex justify-between items-center mb-4">
               <h4 className="font-medium text-gray-900">
-                Servicios {servicesLoading ? "(Cargando...)" : `(${services.length} disponibles)`}
+                Servicios y Productos {servicesLoading ? "(Cargando...)" : `(${services.length} disponibles)`}
               </h4>
               <Button
                 type="button"
                 onClick={addService}
                 disabled={servicesLoading || services.length === 0}
-                data-testid="button-add-service"
+                data-testid="button-add-item"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                {servicesLoading ? "Cargando..." : "Agregar Servicio"}
+                {servicesLoading ? "Cargando..." : "Agregar Artículo"}
               </Button>
             </div>
+
+            {/* Category Summary */}
+            {!servicesLoading && services.length > 0 && (
+              <div className="mb-4 flex gap-4 text-sm text-gray-600">
+                <span>Servicios: {getServicesByCategory('Servicios').length}</span>
+                <span>Productos: {getServicesByCategory('Productos').length}</span>
+              </div>
+            )}
 
             {/* Service Items Table */}
             <div className="border border-gray-200 rounded-lg overflow-hidden">
@@ -319,11 +331,29 @@ export default function InvoiceForm({ onInvoiceChange }: InvoiceFormProps) {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              {services.map((service) => (
-                                <SelectItem key={service.id} value={service.id}>
-                                  {service.description}
-                                </SelectItem>
-                              ))}
+                              {getServicesByCategory('Servicios').length > 0 && (
+                                <>
+                                  <div className="px-2 py-1 text-xs font-semibold text-gray-500 bg-gray-100">SERVICIOS</div>
+                                  {getServicesByCategory('Servicios').map((service) => (
+                                    <SelectItem key={service.id} value={service.id}>
+                                      {service.description} - L. {parseFloat(service.price).toFixed(2)}
+                                    </SelectItem>
+                                  ))}
+                                </>
+                              )}
+                              {getServicesByCategory('Productos').length > 0 && (
+                                <>
+                                  <div className="px-2 py-1 text-xs font-semibold text-gray-500 bg-gray-100">PRODUCTOS</div>
+                                  {getServicesByCategory('Productos').map((service) => (
+                                    <SelectItem key={service.id} value={service.id}>
+                                      {service.description} - L. {parseFloat(service.price).toFixed(2)}
+                                      {service.stock !== -1 && service.stock !== null && (
+                                        <span className="text-xs text-gray-500"> (Stock: {service.stock})</span>
+                                      )}
+                                    </SelectItem>
+                                  ))}
+                                </>
+                              )}
                             </SelectContent>
                           </Select>
                         </td>

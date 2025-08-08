@@ -99,6 +99,9 @@ export default function ThermalReceipt({ invoiceData }: ThermalReceiptProps) {
               <div className="text-xs mt-1">
                 RTN: <span data-testid="receipt-business-rtn">08011987654321</span>
               </div>
+              <div className="text-xs mt-2 font-bold">HORARIOS DE ATENCIÓN:</div>
+              <div className="text-xs">Lunes - Sábado: 8:00 AM - 5:00 PM</div>
+              <div className="text-xs">Domingo: 8:00 AM - 3:00 PM</div>
             </div>
 
             {/* Invoice Details */}
@@ -131,9 +134,9 @@ export default function ThermalReceipt({ invoiceData }: ThermalReceiptProps) {
               </div>
             </div>
 
-            {/* Services */}
+            {/* Items */}
             <div className="border-t p-3">
-              <div className="font-bold mb-2 text-xs">SERVICIOS:</div>
+              <div className="font-bold mb-2 text-xs">ARTÍCULOS:</div>
               {invoiceData?.items && invoiceData.items.length > 0 ? (
                 invoiceData.items.map((item, index) => (
                   <div key={index} className="mb-2">
@@ -141,7 +144,7 @@ export default function ThermalReceipt({ invoiceData }: ThermalReceiptProps) {
                       <span className="flex-1 pr-2">
                         {item.description}
                       </span>
-                      <span>{item.subtotal.toFixed(2)}</span>
+                      <span>L. {item.subtotal.toFixed(2)}</span>
                     </div>
                     <div className="text-xs text-gray-600">
                       {item.quantity} x L. {item.price.toFixed(2)}
@@ -150,7 +153,7 @@ export default function ThermalReceipt({ invoiceData }: ThermalReceiptProps) {
                 ))
               ) : (
                 <div className="mb-2 text-gray-500">
-                  No hay servicios seleccionados
+                  No hay artículos seleccionados
                 </div>
               )}
             </div>

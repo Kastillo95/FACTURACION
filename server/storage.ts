@@ -43,11 +43,12 @@ export class MemStorage implements IStorage {
 
   private initializeDefaultServices() {
     const defaultServices: InsertService[] = [
+      // Servicios de lavado
       {
         code: "LAV001",
         description: "Lavado Completo Premium",
         price: "250.00",
-        category: "Lavado",
+        category: "Servicios",
         taxable: true,
         stock: -1
       },
@@ -55,7 +56,7 @@ export class MemStorage implements IStorage {
         code: "LAV002",
         description: "Lavado Básico",
         price: "150.00",
-        category: "Lavado",
+        category: "Servicios",
         taxable: true,
         stock: -1
       },
@@ -63,7 +64,7 @@ export class MemStorage implements IStorage {
         code: "ENC001",
         description: "Encerado y Brillado",
         price: "150.00",
-        category: "Detailing",
+        category: "Servicios",
         taxable: true,
         stock: -1
       },
@@ -71,9 +72,50 @@ export class MemStorage implements IStorage {
         code: "INT001",
         description: "Limpieza Interior",
         price: "100.00",
-        category: "Interior",
+        category: "Servicios",
         taxable: true,
         stock: -1
+      },
+      // Productos
+      {
+        code: "PROD001",
+        description: "Cera para Autos Premium",
+        price: "180.00",
+        category: "Productos",
+        taxable: true,
+        stock: 25
+      },
+      {
+        code: "PROD002",
+        description: "Shampoo para Autos",
+        price: "120.00",
+        category: "Productos",
+        taxable: true,
+        stock: 40
+      },
+      {
+        code: "PROD003",
+        description: "Aromatizante Vainilla",
+        price: "45.00",
+        category: "Productos",
+        taxable: true,
+        stock: 60
+      },
+      {
+        code: "PROD004",
+        description: "Toallas de Microfibra",
+        price: "80.00",
+        category: "Productos",
+        taxable: true,
+        stock: 30
+      },
+      {
+        code: "PROD005",
+        description: "Protector de Tablero",
+        price: "95.00",
+        category: "Productos",
+        taxable: true,
+        stock: 20
       }
     ];
 
@@ -83,7 +125,8 @@ export class MemStorage implements IStorage {
         ...service,
         id,
         createdAt: new Date(),
-        stock: service.stock ?? -1
+        stock: service.stock ?? -1,
+        taxable: service.taxable ?? true
       };
       this.services.set(id, serviceWithId);
     });
@@ -130,7 +173,8 @@ export class MemStorage implements IStorage {
       ...insertService, 
       id,
       createdAt: new Date(),
-      stock: insertService.stock ?? -1
+      stock: insertService.stock ?? -1,
+      taxable: insertService.taxable ?? true
     };
     this.services.set(id, service);
     return service;
