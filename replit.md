@@ -5,6 +5,7 @@ This is a web-based invoicing system specifically designed for CARWASH PEÑA BLA
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
+Design preferences: Clean, modern design with centered elements, horizontal menus preferred over vertical when possible.
 
 # System Architecture
 

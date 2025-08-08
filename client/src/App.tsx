@@ -10,15 +10,15 @@ import Sidebar from "@/components/sidebar";
 
 function Router() {
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <Sidebar />
-      <main className="flex-1 ml-64">
+      <main className="pt-24 min-h-screen">
         <Switch>
           <Route path="/" component={InvoicePage} />
           <Route path="/invoice" component={InvoicePage} />
           <Route path="/settings" component={SettingsPage} />
           <Route path="/reports" component={ReportsPage} />
-          <Route component={() => <div className="p-8 text-center">404 - Página no encontrada</div>} />
+          <Route component={() => <div className="p-8 text-center text-gray-600">404 - Página no encontrada</div>} />
         </Switch>
       </main>
     </div>

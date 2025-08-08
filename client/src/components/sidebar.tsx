@@ -6,17 +6,18 @@ export default function Sidebar() {
   const [location] = useLocation();
 
   const menuItems = [
-    { path: "/", label: "Nueva Factura", icon: Home },
+    { path: "/", label: "Facturación", icon: Home },
     { path: "/reports", label: "Reportes", icon: BarChart3 },
     { path: "/settings", label: "Configuración", icon: Settings }
   ];
 
   return (
-    <div className="w-64 bg-primary text-white flex-shrink-0 relative fixed h-full">
-      <div className="p-6">
-        {/* Logo and Business Info */}
-        <div className="text-center mb-8">
-          <div className="w-20 h-20 mx-auto mb-3 bg-white rounded-full flex items-center justify-center overflow-hidden">
+    <div className="w-full bg-white shadow-lg border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
+      {/* Header Principal */}
+      <div className="flex items-center justify-between px-6 py-4">
+        {/* Logo y Empresa */}
+        <div className="flex items-center space-x-4">
+          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-blue-500 shadow-md">
             <img 
               src={logoImage} 
               alt="CARWASH PEÑA BLANCA Logo" 
@@ -24,15 +25,16 @@ export default function Sidebar() {
               data-testid="business-logo"
             />
           </div>
-          <h1 className="text-xl font-bold">CARWASH</h1>
-          <p className="text-sm text-blue-200">PEÑA BLANCA</p>
-          <p className="text-xs text-blue-300 mt-1">
-            RTN: <span data-testid="business-rtn">08011987654321</span>
-          </p>
+          <div>
+            <h1 className="text-xl font-bold text-gray-800">CARWASH PEÑA BLANCA</h1>
+            <p className="text-sm text-gray-500">
+              RTN: <span data-testid="business-rtn" className="font-mono">08011987654321</span>
+            </p>
+          </div>
         </div>
 
-        {/* Navigation Menu */}
-        <nav className="space-y-2">
+        {/* Navigation Menu Horizontal */}
+        <nav className="flex space-x-2">
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = location === item.path;
@@ -41,33 +43,32 @@ export default function Sidebar() {
               <Link key={item.path} href={item.path}>
                 <div
                   data-testid={`nav-${item.path.replace('/', '') || 'home'}`}
-                  className={`flex items-center w-full px-4 py-3 text-sm rounded-lg transition-colors cursor-pointer ${
+                  className={`flex items-center px-6 py-3 text-sm rounded-full transition-all duration-200 cursor-pointer group ${
                     isActive
-                      ? "bg-blue-800 text-white"
-                      : "text-blue-200 hover:text-white hover:bg-blue-800"
+                      ? "bg-blue-600 text-white shadow-lg"
+                      : "text-gray-600 hover:text-blue-600 hover:bg-blue-50"
                   }`}
                 >
-                  <Icon className="w-5 h-5 mr-3" />
-                  {item.label}
+                  <Icon className={`w-5 h-5 mr-2 transition-colors ${isActive ? 'text-white' : 'text-gray-500 group-hover:text-blue-600'}`} />
+                  <span className="font-medium">{item.label}</span>
                 </div>
               </Link>
             );
           })}
         </nav>
-      </div>
 
-      {/* Business Contact Info */}
-      <div className="absolute bottom-0 left-0 right-0 w-64 p-4 text-xs text-blue-300 border-t border-blue-700">
-        <p data-testid="business-address">
-          📍 Peña Blanca, Cortés
-        </p>
-        <p>Frente a Cielos y Pisos</p>
-        <p data-testid="business-phone">
-          📞 9464-8987
-        </p>
-        <div className="text-xs mt-2 font-bold">HORARIOS:</div>
-        <div className="text-xs">Lun-Sáb: 8AM-5PM</div>
-        <div className="text-xs">Dom: 8AM-3PM</div>
+        {/* Business Contact Info */}
+        <div className="text-right text-xs text-gray-500">
+          <p data-testid="business-address" className="flex items-center justify-end mb-1">
+            <span className="mr-1">📍</span>
+            Peña Blanca, Cortés
+          </p>
+          <p data-testid="business-phone" className="flex items-center justify-end">
+            <span className="mr-1">📞</span>
+            9464-8987
+          </p>
+          <div className="text-xs mt-1 font-semibold text-gray-600">Lun-Sáb: 8AM-5PM | Dom: 8AM-3PM</div>
+        </div>
       </div>
     </div>
   );
