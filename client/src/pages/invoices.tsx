@@ -202,8 +202,8 @@ export default function InvoicesPage() {
                   invoiceData={{
                     ...selectedInvoice,
                     client: {
-                      name: selectedInvoice.clientName,
-                      rtn: selectedInvoice.clientRtn
+                      clientName: selectedInvoice.clientName,
+                      clientRtn: selectedInvoice.clientRtn
                     },
                     items: [] // En una implementación completa, cargaríamos los items
                   }}

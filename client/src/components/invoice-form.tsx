@@ -62,7 +62,6 @@ export default function InvoiceForm({ onInvoiceChange }: InvoiceFormProps) {
       return await apiRequest("POST", "/api/invoices", data);
     },
     onSuccess: (response) => {
-      const data = response.json();
       toast({
         title: "Factura creada exitosamente",
         description: "La factura ha sido generada correctamente.",
@@ -70,10 +69,20 @@ export default function InvoiceForm({ onInvoiceChange }: InvoiceFormProps) {
       clearForm();
       queryClient.invalidateQueries({ queryKey: ["/api/invoices"] });
     },
-    onError: (error) => {
+    onError: (error: any) => {
+      console.error("Invoice creation error:", error);
+      let errorMessage = "No se pudo crear la factura. Intente nuevamente.";
+      
+      // Try to extract more specific error information
+      if (error?.message) {
+        errorMessage = error.message;
+      } else if (error?.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      }
+      
       toast({
-        title: "Error",
-        description: "No se pudo crear la factura. Intente nuevamente.",
+        title: "Error al crear factura",
+        description: errorMessage,
         variant: "destructive",
       });
     },
@@ -189,21 +198,72 @@ export default function InvoiceForm({ onInvoiceChange }: InvoiceFormProps) {
   };
 
   const onSubmit = async (data: z.infer<typeof invoiceFormSchema>) => {
-    if (invoiceItems.length === 0) {
+    try {
+      if (invoiceItems.length === 0) {
+        toast({
+          title: "Error",
+          description: "Debe agregar al menos un artículo a la factura.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Validate all items have valid service IDs and exist in current services
+      const invalidItems = invoiceItems.filter(item => {
+        if (!item.serviceId || item.serviceId === "") return true;
+        const serviceExists = services.find(s => s.id === item.serviceId);
+        return !serviceExists;
+      });
+      
+      if (invalidItems.length > 0) {
+        toast({
+          title: "Error",
+          description: "Algunos servicios seleccionados ya no están disponibles. Actualice la lista de servicios.",
+          variant: "destructive",
+        });
+        
+        // Remove invalid items and refresh services
+        setInvoiceItems(prev => prev.filter(item => {
+          const serviceExists = services.find(s => s.id === item.serviceId);
+          return serviceExists;
+        }));
+        
+        queryClient.invalidateQueries({ queryKey: ["/api/services"] });
+        return;
+      }
+
+      // Prepare invoice data with fresh service information
+      const processedItems = invoiceItems.map(item => {
+        const service = services.find(s => s.id === item.serviceId);
+        if (!service) throw new Error(`Service ${item.serviceId} not found`);
+        
+        return {
+          serviceId: item.serviceId,
+          description: service.description,
+          price: parseFloat(service.price),
+          quantity: item.quantity,
+          subtotal: parseFloat(service.price) * item.quantity,
+          taxable: service.taxable,
+        };
+      });
+
+      console.log("Submitting invoice with items:", processedItems);
+
+      // Submit the invoice
+      const invoiceData = {
+        client: data,
+        items: processedItems,
+      };
+
+      createInvoiceMutation.mutate(invoiceData);
+    } catch (error) {
+      console.error("Error creating invoice:", error);
       toast({
         title: "Error",
-        description: "Debe agregar al menos un artículo.",
+        description: "Error inesperado al crear la factura. Revise la consola para más detalles.",
         variant: "destructive",
       });
-      return;
     }
-
-    const invoiceData = {
-      client: data,
-      items: invoiceItems,
-    };
-
-    createInvoiceMutation.mutate(invoiceData);
   };
 
   const handleRtnBlur = async () => {
