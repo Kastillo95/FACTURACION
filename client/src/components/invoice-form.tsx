@@ -112,23 +112,28 @@ export default function InvoiceForm({ onInvoiceChange }: InvoiceFormProps) {
 
   const calculateTotals = () => {
     let subtotalExempt = 0;
-    let subtotalTaxable = 0;
+    let subtotalTaxableBeforeISV = 0;
+    let totalISV = 0;
 
     invoiceItems.forEach(item => {
       if (item.taxable) {
-        subtotalTaxable += item.subtotal;
+        // El precio ya incluye ISV, calculamos el precio sin ISV
+        const priceWithoutISV = item.subtotal / 1.15;
+        const isvAmount = item.subtotal - priceWithoutISV;
+        
+        subtotalTaxableBeforeISV += priceWithoutISV;
+        totalISV += isvAmount;
       } else {
         subtotalExempt += item.subtotal;
       }
     });
 
-    const isv = subtotalTaxable * 0.15; // 15% ISV for Honduras
-    const total = subtotalExempt + subtotalTaxable + isv;
+    const total = subtotalExempt + subtotalTaxableBeforeISV + totalISV;
 
     return {
       subtotalExempt: subtotalExempt.toFixed(2),
-      subtotalTaxable: subtotalTaxable.toFixed(2),
-      isv: isv.toFixed(2),
+      subtotalTaxable: subtotalTaxableBeforeISV.toFixed(2),
+      isv: totalISV.toFixed(2),
       total: total.toFixed(2),
     };
   };
@@ -361,6 +366,9 @@ export default function InvoiceForm({ onInvoiceChange }: InvoiceFormProps) {
           <div className="border-t pt-6">
             <div className="bg-gray-50 rounded-lg p-4">
               <h4 className="font-medium text-gray-900 mb-3">Desglose de Impuestos</h4>
+              <p className="text-xs text-gray-600 mb-3">
+                * Los precios mostrados ya incluyen el ISV. Aquí se muestra el desglose.
+              </p>
               <div className="space-y-2 text-sm">
                 {(() => {
                   const calculations = calculateTotals();
@@ -371,7 +379,7 @@ export default function InvoiceForm({ onInvoiceChange }: InvoiceFormProps) {
                         <span data-testid="text-subtotal-exempt">L. {calculations.subtotalExempt}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>Subtotal (Gravado)</span>
+                        <span>Subtotal (Sin ISV)</span>
                         <span data-testid="text-subtotal-taxable">L. {calculations.subtotalTaxable}</span>
                       </div>
                       <div className="flex justify-between">

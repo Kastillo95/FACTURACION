@@ -167,7 +167,7 @@ export default function ThermalReceipt({ invoiceData }: ThermalReceiptProps) {
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Subtotal Gravado:</span>
+                  <span>Subtotal (Sin ISV):</span>
                   <span>
                     L. <span data-testid="receipt-subtotal-taxable">
                       {invoiceData?.calculations?.subtotalTaxable || '0.00'}

@@ -148,7 +148,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Calculate totals
       let subtotalExempt = 0;
-      let subtotalTaxable = 0;
+      let subtotalTaxableBeforeISV = 0;
+      let totalISV = 0;
       
       // Get service details and calculate subtotals
       const processedItems = [];
@@ -161,7 +162,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const subtotal = parseFloat(service.price) * item.quantity;
         
         if (service.taxable) {
-          subtotalTaxable += subtotal;
+          // El precio ya incluye ISV, calculamos el precio sin ISV
+          const priceWithoutISV = subtotal / 1.15;
+          const isvAmount = subtotal - priceWithoutISV;
+          
+          subtotalTaxableBeforeISV += priceWithoutISV;
+          totalISV += isvAmount;
         } else {
           subtotalExempt += subtotal;
         }
@@ -175,15 +181,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      const isv = subtotalTaxable * 0.15; // 15% ISV tax for Honduras
-      const total = subtotalExempt + subtotalTaxable + isv;
+      const total = subtotalExempt + subtotalTaxableBeforeISV + totalISV;
 
       const invoice = await storage.createInvoice({
         clientRtn: existingClient.rtn,
         clientName: existingClient.name,
         subtotalExempt: subtotalExempt.toFixed(2),
-        subtotalTaxable: subtotalTaxable.toFixed(2),
-        isv: isv.toFixed(2),
+        subtotalTaxable: subtotalTaxableBeforeISV.toFixed(2),
+        isv: totalISV.toFixed(2),
         total: total.toFixed(2)
       }, processedItems);
 
