@@ -1,4 +1,5 @@
 import { Car, FileText, Package, Users, BarChart3, Settings } from "lucide-react";
+import logoImage from "@assets/IMG-20250624-WA0043_1754679298693.jpg";
 
 interface SidebarProps {
   currentSection: string;
@@ -19,8 +20,13 @@ export default function Sidebar({ currentSection, onSectionChange }: SidebarProp
       <div className="p-6">
         {/* Logo and Business Info */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 mx-auto mb-3 bg-white rounded-full flex items-center justify-center">
-            <Car className="text-secondary text-2xl" size={32} />
+          <div className="w-20 h-20 mx-auto mb-3 bg-white rounded-full flex items-center justify-center overflow-hidden">
+            <img 
+              src={logoImage} 
+              alt="CARWASH PEÑA BLANCA Logo" 
+              className="w-full h-full object-cover"
+              data-testid="business-logo"
+            />
           </div>
           <h1 className="text-xl font-bold">CARWASH</h1>
           <p className="text-sm text-blue-200">PEÑA BLANCA</p>
