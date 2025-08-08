@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import InvoicePage from "@/pages/invoice";
+import InvoicesPage from "@/pages/invoices";
 import SettingsPage from "@/pages/settings";
 import ReportsPage from "@/pages/reports";
 import Sidebar from "@/components/sidebar";
@@ -16,6 +17,7 @@ function Router() {
         <Switch>
           <Route path="/" component={InvoicePage} />
           <Route path="/invoice" component={InvoicePage} />
+          <Route path="/invoices" component={InvoicesPage} />
           <Route path="/settings" component={SettingsPage} />
           <Route path="/reports" component={ReportsPage} />
           <Route component={() => <div className="p-8 text-center text-gray-600">404 - Página no encontrada</div>} />

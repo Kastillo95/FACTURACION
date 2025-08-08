@@ -6,7 +6,8 @@ export default function Sidebar() {
   const [location] = useLocation();
 
   const menuItems = [
-    { path: "/", label: "Facturación", icon: Home },
+    { path: "/", label: "Nueva Factura", icon: Home },
+    { path: "/invoices", label: "Facturas", icon: FileText },
     { path: "/reports", label: "Reportes", icon: BarChart3 },
     { path: "/settings", label: "Configuración", icon: Settings }
   ];
