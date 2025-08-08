@@ -87,7 +87,7 @@ export default function InvoiceForm({ onInvoiceChange }: InvoiceFormProps) {
   });
 
   useEffect(() => {
-    if (nextNumberData?.invoiceNumber) {
+    if (nextNumberData && 'invoiceNumber' in nextNumberData) {
       setInvoiceNumber(nextNumberData.invoiceNumber);
     }
   }, [nextNumberData]);
@@ -264,7 +264,9 @@ export default function InvoiceForm({ onInvoiceChange }: InvoiceFormProps) {
           {/* Services Section */}
           <div className="border-t pt-6">
             <div className="flex justify-between items-center mb-4">
-              <h4 className="font-medium text-gray-900">Servicios</h4>
+              <h4 className="font-medium text-gray-900">
+                Servicios {servicesLoading ? "(Cargando...)" : `(${services.length} disponibles)`}
+              </h4>
               <Button
                 type="button"
                 onClick={addService}
@@ -272,7 +274,7 @@ export default function InvoiceForm({ onInvoiceChange }: InvoiceFormProps) {
                 data-testid="button-add-service"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Agregar Servicio
+                {servicesLoading ? "Cargando..." : "Agregar Servicio"}
               </Button>
             </div>
 
@@ -292,7 +294,12 @@ export default function InvoiceForm({ onInvoiceChange }: InvoiceFormProps) {
                   {invoiceItems.length === 0 ? (
                     <tr>
                       <td colSpan={5} className="px-4 py-8 text-center text-gray-500">
-                        No hay servicios agregados. Haga clic en "Agregar Servicio" para comenzar.
+                        {servicesLoading 
+                          ? "Cargando servicios disponibles..." 
+                          : services.length === 0 
+                            ? "No hay servicios disponibles. Configure servicios en el inventario primero."
+                            : "No hay servicios agregados. Haga clic en 'Agregar Servicio' para comenzar."
+                        }
                       </td>
                     </tr>
                   ) : (
