@@ -5,7 +5,8 @@ import { insertClientSchema, insertServiceSchema, insertInvoiceSchema, insertInv
 import { z } from "zod";
 
 const createInvoiceSchema = z.object({
-  client: insertClientSchema,
+  clientRtn: z.string(),
+  clientName: z.string(),
   items: z.array(z.object({
     serviceId: z.string(),
     description: z.string(),
@@ -147,9 +148,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const invoiceData = createInvoiceSchema.parse(req.body);
       
       // Ensure client exists or create new one
-      let existingClient = await storage.getClientByRtn(invoiceData.client.rtn);
+      let existingClient = await storage.getClientByRtn(invoiceData.clientRtn);
       if (!existingClient) {
-        existingClient = await storage.createClient(invoiceData.client);
+        existingClient = await storage.createClient({
+          rtn: invoiceData.clientRtn,
+          name: invoiceData.clientName
+        });
       }
 
       // Calculate totals
