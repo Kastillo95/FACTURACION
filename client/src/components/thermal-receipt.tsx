@@ -42,17 +42,62 @@ export default function ThermalReceipt({ invoiceData }: ThermalReceiptProps) {
             <head>
               <title>Factura ${invoiceData?.invoiceNumber || ''}</title>
               <style>
+                @media print {
+                  body {
+                    font-family: 'Courier New', monospace !important;
+                    width: 58mm !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    font-size: 12px !important;
+                    background: white !important;
+                    color: black !important;
+                  }
+                  * {
+                    font-family: 'Courier New', monospace !important;
+                    color: black !important;
+                    background: white !important;
+                  }
+                }
                 body { 
                   font-family: 'Courier New', monospace; 
                   width: 58mm; 
                   margin: 0; 
-                  padding: 0; 
+                  padding: 8px; 
                   font-size: 12px; 
+                  line-height: 1.2;
+                  background: white;
+                  color: black;
                 }
                 .text-center { text-align: center; }
-                .text-bold { font-weight: bold; }
-                .border-top { border-top: 1px solid #000; padding-top: 8px; margin-top: 8px; }
-                .flex { display: flex; justify-content: space-between; }
+                .font-bold, .text-bold { font-weight: bold; }
+                .border-top, .border-t { 
+                  border-top: 1px solid #000; 
+                  padding-top: 8px; 
+                  margin-top: 8px; 
+                }
+                .border-b {
+                  border-bottom: 1px solid #000; 
+                  padding-bottom: 8px; 
+                  margin-bottom: 8px; 
+                }
+                .flex, .flex.justify-between { 
+                  display: flex; 
+                  justify-content: space-between; 
+                  align-items: baseline;
+                  margin-bottom: 2px;
+                }
+                .p-3 { padding: 8px; }
+                .mb-1 { margin-bottom: 4px; }
+                .mb-2 { margin-bottom: 8px; }
+                .mt-2 { margin-top: 8px; }
+                .text-xs { font-size: 10px; }
+                .text-sm { font-size: 11px; }
+                .text-gray-600, .text-gray-500 { color: #666; }
+                .flex-1 { flex: 1; }
+                .pr-2 { padding-right: 8px; }
+                .space-y-1 > * + * { margin-top: 2px; }
+                img { max-width: 40px; max-height: 40px; }
+                .w-12.h-12 { width: 40px; height: 40px; }
               </style>
             </head>
             <body>
@@ -144,10 +189,10 @@ export default function ThermalReceipt({ invoiceData }: ThermalReceiptProps) {
                       <span className="flex-1 pr-2">
                         {item.description}
                       </span>
-                      <span>L. {item.subtotal.toFixed(2)}</span>
+                      <span>L. {parseFloat(item.subtotal.toString()).toFixed(2)}</span>
                     </div>
                     <div className="text-xs text-gray-600">
-                      {item.quantity} x L. {item.price.toFixed(2)}
+                      {item.quantity || 1} x L. {parseFloat(item.price.toString()).toFixed(2)}
                     </div>
                   </div>
                 ))

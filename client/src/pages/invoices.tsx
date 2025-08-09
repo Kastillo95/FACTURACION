@@ -11,6 +11,7 @@ import ThermalReceipt from "@/components/thermal-receipt";
 export default function InvoicesPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
+  const [selectedInvoiceDetails, setSelectedInvoiceDetails] = useState<any>(null);
   const [showReceipt, setShowReceipt] = useState(false);
 
   const { data: invoices = [], isLoading } = useQuery<Invoice[]>({
@@ -24,8 +25,18 @@ export default function InvoicesPage() {
     invoice.clientRtn.includes(searchTerm)
   );
 
-  const handleViewReceipt = (invoice: Invoice) => {
+  const handleViewReceipt = async (invoice: Invoice) => {
     setSelectedInvoice(invoice);
+    try {
+      // Fetch full invoice details with items
+      const response = await fetch(`/api/invoices/${invoice.id}`);
+      if (response.ok) {
+        const invoiceDetails = await response.json();
+        setSelectedInvoiceDetails(invoiceDetails);
+      }
+    } catch (error) {
+      console.error("Error fetching invoice details:", error);
+    }
     setShowReceipt(true);
   };
 
@@ -199,14 +210,20 @@ export default function InvoicesPage() {
               
               <div className="p-4">
                 <ThermalReceipt 
-                  invoiceData={{
-                    ...selectedInvoice,
+                  invoiceData={selectedInvoiceDetails ? {
+                    invoiceNumber: selectedInvoice.invoiceNumber,
                     client: {
                       clientName: selectedInvoice.clientName,
                       clientRtn: selectedInvoice.clientRtn
                     },
-                    items: [] // En una implementación completa, cargaríamos los items
-                  }}
+                    items: selectedInvoiceDetails.items || [],
+                    calculations: {
+                      subtotalExempt: selectedInvoice.subtotalExempt,
+                      subtotalTaxable: selectedInvoice.subtotalTaxable,
+                      isv: selectedInvoice.isv,
+                      total: selectedInvoice.total
+                    }
+                  } : null}
                 />
               </div>
             </div>
